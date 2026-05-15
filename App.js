@@ -32,14 +32,14 @@ const GlobalStyle = ({ colors }) => (
 
     .app { min-height: 100vh; background: ${colors.background}; }
 
-    .nav { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; background: rgba(10,10,10,0.95); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(201,169,110,0.12); position: sticky; top: 0; z-index: 200; }
+    .nav { display: flex; align-items: center; justify-content: space-between; padding: 16px 32px; background: rgba(255,255,255,0.72); backdrop-filter: blur(16px); border-bottom: 1px solid rgba(183,110,121,0.2); position: sticky; top: 0; z-index: 200; }
     .logo { font-family:'Playfair Display',serif; font-size:20px; color:${colors.primary}; cursor:pointer; }
     .logo span { color:${colors.text}; }
     .nav-right { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
-    .nav-tab { padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(201,169,110,0.25); background: transparent; color: #8a7a6a; cursor: pointer; font-size: 13px; transition: all 0.2s; }
+    .nav-tab { padding: 10px 18px; border-radius: 16px; border: 1px solid rgba(183,110,121,0.25); background: rgba(255,255,255,0.35); color: #6f5560; cursor: pointer; font-size: 13px; transition: all 0.2s; }
     .nav-tab:hover { border-color:${colors.primary}; color:${colors.primary}; }
     .nav-tab.active { background:${colors.primary}; color:#0a0a0a; border-color:${colors.primary}; font-weight:600; }
-    .nav-user { font-size:12px; color:#6a5a4a; padding:8px 14px; border:1px solid rgba(255,255,255,0.06); border-radius:20px; }
+    .nav-user { font-size:12px; color:#6f5560; padding:9px 14px; border:1px solid rgba(183,110,121,0.2); border-radius:16px; background:rgba(255,255,255,.45); cursor:pointer; }
     .nav-logout { padding:7px 14px; border-radius:20px; border:1px solid rgba(255,60,60,0.25); background:transparent; color:#c06060; cursor:pointer; font-size:12px; transition:all 0.2s; }
     .nav-logout:hover { background:rgba(255,60,60,0.1); }
 
@@ -178,8 +178,9 @@ const GlobalStyle = ({ colors }) => (
     .sale-label-tag { display:inline-block; padding:3px 10px; background:rgba(220,60,60,0.15); border:1px solid rgba(220,60,60,0.3); color:#e74c3c; border-radius:12px; font-size:11px; font-weight:600; margin-bottom:8px; }
 
     /* LANG BUTTON */
-    .lang-btn { padding:6px 12px; border-radius:20px; border:1px solid rgba(201,169,110,0.3); background:transparent; color:${colors.primary}; cursor:pointer; font-size:12px; font-weight:600; transition:all 0.2s; }
-    .lang-btn:hover { background:rgba(201,169,110,0.1); }
+    .lang-wrap{position:relative}.lang-btn { padding:8px 12px; border-radius:16px; border:1px solid rgba(183,110,121,0.3); background:rgba(255,255,255,.45); color:${colors.primary}; cursor:pointer; font-size:14px; font-weight:600; transition:all 0.2s; }
+    .lang-btn:hover { background:rgba(183,110,121,0.1); }
+    .lang-menu{position:absolute;top:42px;right:0;background:rgba(255,255,255,.88);backdrop-filter:blur(12px);border:1px solid rgba(183,110,121,.25);border-radius:14px;padding:6px;display:flex;flex-direction:column;gap:4px;min-width:120px;z-index:20}.lang-item{background:transparent;border:none;padding:8px 10px;border-radius:10px;cursor:pointer;text-align:start}.lang-item:hover{background:rgba(183,110,121,.12);} .footer{margin:48px 20px 20px;padding:28px;border-radius:24px;background:linear-gradient(135deg,rgba(233,207,215,.75),rgba(248,242,244,.9));border:1px solid rgba(183,110,121,.2);box-shadow:0 20px 50px rgba(183,110,121,.13)} .footer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px}
 
     /* NOTIF DOT */
     .notif-dot { display:inline-block; width:7px; height:7px; background:#e74c3c; border-radius:50%; margin-left:4px; vertical-align:middle; }
@@ -431,7 +432,7 @@ async function incrementAppearance(productIds, supabaseClient) {
   }
 }
 
-const DEFAULT_COLORS = {primary:"#c9a96e",background:"#0a0a0a",text:"#f5f0eb",accent:"#1a1a2e"};
+const DEFAULT_COLORS = {primary:"#b76e79",background:"#f8f2f4",text:"#3d2b33",accent:"#e9cfd7"};
 
 export default function App() {
   const [user, setUser]         = useState(null);
@@ -503,6 +504,7 @@ export default function App() {
   const [dbProducts, setDbProducts] = useState(PRODUCTS);
   const [reviewsMap, setReviewsMap] = useState({}); // { product_id: { avg_rating, reviews_score } }
   const [lang, setLang] = useState("ar"); // "ar" | "en"
+  const [langOpen, setLangOpen] = useState(false);
   const [consultations, setConsultations] = useState([]);
   const [consultForm, setConsultForm] = useState({question:"", skin_type:"", concerns:""});
   const [consultMsg, setConsultMsg] = useState("");
@@ -1225,19 +1227,14 @@ export default function App() {
         <nav className="nav">
           <div className="logo" onClick={resetAll}>Skin<span>Match</span></div>
           <div className="nav-right">
-            <button className="lang-btn" onClick={()=>setLang(l=>l==="ar"?"en":"ar")}>{lang==="ar"?"EN":"عر"}</button>
+            <div className="lang-wrap">
+              <button className="lang-btn" onClick={()=>setLangOpen(v=>!v)}>🌐</button>
+              {langOpen && <div className="lang-menu"><button className="lang-item" onClick={()=>{setLang("ar");setLangOpen(false);}}>العربية</button><button className="lang-item" onClick={()=>{setLang("en");setLangOpen(false);}}>English</button></div>}
+            </div>
             <button className="nav-tab" onClick={async()=>{ const {data} = await supabase.from("products").select("*").eq("on_sale",true); if(data) setSaleProducts(data); setView("sales"); }}>{t.sales}</button>
-            {view==="home" && <>
-              <button className={`nav-tab ${view==="quiz"?"active":""}`} onClick={()=>{setView("quiz");setQuizStep(0);}}>{lang==="ar"?"Quiz":"Quiz"}</button>
-              <button className="nav-tab" onClick={()=>setView("concern")}>{lang==="ar"?"حسب المشكلة":"By Concern"}</button>
-            </>}
             {user ? <>
-              <button className="nav-tab" onClick={()=>setView("consultation")}>
-                {t.consult}{hasNewReply && <span className="notif-dot"/>}
-              </button>
-              <button className="nav-tab" onClick={()=>{loadSaved();setView("saved");}}>{t.myRoutines}</button>
               {isAdmin && <button className="nav-tab" onClick={()=>setView("admin")}>⚙️ Admin</button>}
-              <span className="nav-user">{user.user_metadata?.name || user.email.split("@")[0]}</span>
+              <button className="nav-user" onClick={()=>setView("profile")}>{user.user_metadata?.name || user.email.split("@")[0]}</button>
               <button className="nav-logout" onClick={handleLogout}>{t.logout}</button>
             </> : <>
               <button className="nav-tab" onClick={()=>{setAuthForm({name:"",age:"",email:"",password:""});setAuthModal("login");}}>{t.login}</button>
@@ -1265,6 +1262,20 @@ export default function App() {
             <div className="stat"><span className="stat-num">100%</span><div className="stat-lbl">{t.local}</div></div>
           </div>
         </div>}
+
+
+        {view==="profile" && <div className="section fade-in">
+          <button className="back-btn" onClick={()=>handleBack("profile")}>← {t.back}</button>
+          <h2 className="section-title">{lang==="ar"?"الملف الشخصي":"User Profile"}</h2>
+          <div className="saved-grid">
+            <div className="saved-card" onClick={()=>{loadSaved();setView("saved");}}><div className="saved-card-title">{lang==="ar"?"روتيناتي":"My Routines"}</div></div>
+            <div className="saved-card" onClick={()=>setView("consultation")}><div className="saved-card-title">{lang==="ar"?"استشاراتي":"My Consultations"}</div></div>
+            <div className="saved-card" onClick={()=>{loadSaved();setView("saved");}}><div className="saved-card-title">{lang==="ar"?"النتائج المحفوظة":"Saved Results"}</div></div>
+            <div className="saved-card"><div className="saved-card-title">{lang==="ar"?"إعدادات الحساب":"Account Settings"}</div><div className="saved-card-steps">{user?.email}</div></div>
+          </div>
+        </div>}
+
+        {view==="home" && <footer className="footer"><div className="footer-grid"><div><h3 className="section-title" style={{fontSize:22,textAlign:'start'}}>{lang==="ar"?"Contact With Us":"Contact With Us"}</h3><p>support@skinmatch.ai</p></div><div><h3 className="section-title" style={{fontSize:22,textAlign:'start'}}>{lang==="ar"?"Who We Are":"Who We Are"}</h3><p>{lang==="ar"?"منصة AI فاخرة للعناية بالبشرة وتطابق المنتجات.":"A luxury AI-powered skincare matching platform."}</p></div></div></footer>}
 
         {/* ── SMART QUIZ ── */}
         {view==="quiz" && <div className="section fade-up">
